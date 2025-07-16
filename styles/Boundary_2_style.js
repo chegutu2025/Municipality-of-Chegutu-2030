@@ -21,7 +21,7 @@ var style_Boundary_2 = function(feature, resolution){
         labelText = String(feature.get("Name"));
     }
     var style = [ new ol.style.Style({
-        stroke: new ol.style.Stroke({color: 'rgba(253,197,13,1.0)', lineDash: null, lineCap: 'butt', lineJoin: 'miter', width: 4.787999999999999}),fill: new ol.style.Fill({color: 'rgba(253,196,51,0.0)'}),
+        stroke: new ol.style.Stroke({color: 'rgba(159,207,159,1.0)', lineDash: null, lineCap: 'butt', lineJoin: 'miter', width: 4.787999999999999}),fill: new ol.style.Fill({color: 'rgba(253,196,51,0.0)'}),
         text: createTextStyle(feature, resolution, labelText, labelFont,
                               labelFill, placement, bufferColor,
                               bufferWidth)

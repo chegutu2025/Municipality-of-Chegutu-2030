@@ -129,10 +129,10 @@ lyr_ShoppingCentre_6.set('fieldImages', {'id': 'TextEdit', 'Name': 'TextEdit', '
 lyr_HealthcareFacilities_7.set('fieldImages', {'id': 'TextEdit', 'Name': 'TextEdit', 'Photopath': 'ExternalResource', });
 lyr_Boundary_2.set('fieldLabels', {'id': 'no label', 'Name': 'inline label - always visible', });
 lyr_Schools_3.set('fieldLabels', {'id': 'no label', 'Name': 'inline label - always visible', 'Photopath': 'inline label - always visible', 'Status': 'no label', 'Type': 'no label', });
-lyr_Locations_4.set('fieldLabels', {'id': 'no label', 'Name': 'inline label - always visible', });
+lyr_Locations_4.set('fieldLabels', {'id': 'no label', 'Name': 'no label', });
 lyr_PublicBuildings_5.set('fieldLabels', {'id': 'no label', 'Name': 'inline label - always visible', 'PathPhoto': 'inline label - always visible', 'Status': 'inline label - always visible', });
 lyr_ShoppingCentre_6.set('fieldLabels', {'id': 'no label', 'Name': 'inline label - always visible', 'PhotoPath': 'no label', });
-lyr_HealthcareFacilities_7.set('fieldLabels', {'id': 'no label', 'Name': 'header label - always visible', 'Photopath': 'no label', });
+lyr_HealthcareFacilities_7.set('fieldLabels', {'id': 'no label', 'Name': 'inline label - always visible', 'Photopath': 'no label', });
 lyr_HealthcareFacilities_7.on('precompose', function(evt) {
     evt.context.globalCompositeOperation = 'normal';
 });

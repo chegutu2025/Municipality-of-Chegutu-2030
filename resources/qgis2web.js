@@ -4,12 +4,12 @@ var map = new ol.Map({
     renderer: 'canvas',
     layers: layersList,
     view: new ol.View({
-        extent: [3346968.489410, -2059009.912139, 3366473.993800, -2045669.032313], maxZoom: 28, minZoom: 1
+        extent: [3345735.564497, -2058448.773236, 3365241.068887, -2045724.355867], maxZoom: 28, minZoom: 1
     })
 });
 
 //initial view - epsg:3857 coordinates if not "Match project CRS"
-map.getView().fit([3346968.489410, -2059009.912139, 3366473.993800, -2045669.032313], map.getSize());
+map.getView().fit([3345735.564497, -2058448.773236, 3365241.068887, -2045724.355867], map.getSize());
 
 ////small screen definition
     var hasTouchScreen = map.getViewport().classList.contains('ol-touch');
@@ -924,17 +924,6 @@ if (elementToMove && parentElement) {
 
 //layer search
 
-var searchLayer = new SearchLayer({
-    layer: lyr_PublicBuildings_5,
-    colName: 'Name',
-    zoom: 10,
-    collapsed: true,
-    map: map
-});
-map.addControl(searchLayer);
-document.getElementsByClassName('search-layer')[0].getElementsByTagName('button')[0].className += ' fa fa-binoculars';
-document.getElementsByClassName('search-layer-input-search')[0].placeholder = 'Search feature ...';
-    
 
 //scalebar
 
