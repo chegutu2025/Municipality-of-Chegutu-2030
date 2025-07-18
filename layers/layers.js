@@ -135,4 +135,135 @@ lyr_ShoppingCentre_6.set('fieldLabels', {'id': 'no label', 'Name': 'inline label
 lyr_HealthcareFacilities_7.set('fieldLabels', {'id': 'no label', 'Name': 'inline label - always visible', 'Photopath': 'no label', });
 lyr_HealthcareFacilities_7.on('precompose', function(evt) {
     evt.context.globalCompositeOperation = 'normal';
-});
+}); 
+<!DOCTYPE html>
+<html>
+<head>
+  <title>OpenLayers Interactive Routing</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css" />
+  <style>
+    #map { width: 100%; height: 500px; }
+    #info { margin: 8px 0; }
+  </style>
+</head>
+<body>
+  <div id="info">Click to set START point</div>
+  <div id="map"></div>
+  <script src="https://cdn.jsdelivr.net/npm/ol@latest/ol.js"></script>
+  <script>
+    // Replace this with your real OpenRouteService API key!
+    const ORS_API_KEY = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjkxNzY3Mzc5MTkyMTQ0NGZhMTlmNDQ0M2ZiY2RiNDVmIiwiaCI6Im11cm11cjY0In0=Y';
+
+    // OpenLayers map setup
+    const map = new ol.Map({
+      target: 'map',
+      layers: [
+        new ol.layer.Tile({ source: new ol.source.OSM() })
+      ],
+      view: new ol.View({
+        center: ol.proj.fromLonLat([0, 0]),
+        zoom: 2
+      })
+    });
+
+    // Vector sources and layers for markers and route
+    const markerSource = new ol.source.Vector();
+    const markerLayer = new ol.layer.Vector({
+      source: markerSource,
+      style: function(feature) {
+        return new ol.style.Style({
+          image: new ol.style.Circle({
+            radius: 7,
+            fill: new ol.style.Fill({ color: feature.get('type') === 'start' ? 'green' : 'red' }),
+            stroke: new ol.style.Stroke({ color: 'white', width: 2 })
+          })
+        });
+      }
+    });
+    map.addLayer(markerLayer);
+
+    const routeSource = new ol.source.Vector();
+    const routeLayer = new ol.layer.Vector({
+      source: routeSource,
+      style: new ol.style.Style({
+        stroke: new ol.style.Stroke({
+          color: 'blue',
+          width: 4
+        })
+      })
+    });
+    map.addLayer(routeLayer);
+
+    let startCoord = null;
+    let endCoord = null;
+    let clickCount = 0;
+
+    const info = document.getElementById('info');
+
+    // Listen for map clicks
+    map.on('click', function(evt) {
+      const coord = ol.proj.toLonLat(evt.coordinate);
+      if (clickCount === 0) {
+        // Set start point
+        startCoord = coord;
+        markerSource.clear();
+        routeSource.clear();
+        markerSource.addFeature(new ol.Feature({
+          geometry: new ol.geom.Point(evt.coordinate),
+          type: 'start'
+        }));
+        info.textContent = 'Click to set END point';
+        clickCount = 1;
+      } else if (clickCount === 1) {
+        // Set end point and show route
+        endCoord = coord;
+        markerSource.addFeature(new ol.Feature({
+          geometry: new ol.geom.Point(evt.coordinate),
+          type: 'end'
+        }));
+        info.textContent = 'Fetching route...';
+        getRoute(startCoord, endCoord);
+        clickCount = 2;
+      } else {
+        // Reset and start again
+        startCoord = null;
+        endCoord = null;
+        markerSource.clear();
+        routeSource.clear();
+        info.textContent = 'Click to set START point';
+        clickCount = 0;
+      }
+    });
+
+    async function getRoute(start, end) {
+      const url = 'https://api.openrouteservice.org/v2/directions/driving-car/geojson';
+      const body = { coordinates: [start, end] };
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Authorization': ORS_API_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        });
+        const data = await response.json();
+        const format = new ol.format.GeoJSON();
+        const features = format.readFeatures(data, {
+          featureProjection: map.getView().getProjection()
+        });
+        routeSource.clear();
+        routeSource.addFeatures(features);
+        // Zoom to the route
+        if (features.length > 0) {
+          map.getView().fit(routeSource.getExtent(), { padding: [50, 50, 50, 50] });
+        }
+        info.textContent = 'Route shown! Click anywhere to start new route.';
+      } catch (err) {
+        info.textContent = 'Failed to fetch route. Try again.';
+      }
+    }
+  </script>
+</body>
+</html>
