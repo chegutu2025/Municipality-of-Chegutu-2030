@@ -1,5 +1,5 @@
 
-var map = new ol.Map({
+var map = new ol.Map({eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjkxNzY3Mzc5MTkyMTQ0NGZhMTlmNDQ0M2ZiY2RiNDVmIiwiaCI6Im11cm11cjY0In0=
     target: 'map',
     renderer: 'canvas',
     layers: layersList,
@@ -1020,3 +1020,144 @@ document.addEventListener('DOMContentLoaded', function() {
     if (attributionControl) {
         bottomRightContainerDiv.appendChild(attributionControl);
     }
+<!DOCTYPE html>
+<html>
+<head>
+  <title>OpenLayers Route Example</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css" />
+  <style>
+    #map { width: 100%; height: 500px; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script src="https://cdn.jsdelivr.net/npm/ol@latest/ol.js"></script>
+  <script>
+    // 1. Replace with your actual OpenRouteService API key
+    const ORS_API_KEY = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjkxNzY3Mzc5MTkyMTQ0NGZhMTlmNDQ0M2ZiY2RiNDVmIiwiaCI6Im11cm11cjY0In0=';
+
+    // 2. Set start and end coordinates [longitude, latitude]
+    const start = [ -0.09, 51.5 ];    // Example: London
+    const end   = [ -0.1, 51.51 ];    // Example: Near London
+
+    // 3. Set up OpenLayers map
+    const map = new ol.Map({
+      target: 'map',
+      layers: [
+        new ol.layer.Tile({ source: new ol.source.OSM() })
+      ],
+      view: new ol.View({
+        center: ol.proj.fromLonLat([ -0.095, 51.505 ]),
+        zoom: 14
+      })
+    });
+
+    // 4. Layer for the route
+    const routeSource = new ol.source.Vector();
+    const routeLayer = new ol.layer.Vector({
+      source: routeSource,
+      style: new ol.style.Style({
+        stroke: new ol.style.Stroke({
+          color: 'blue',
+          width: 4
+        })
+      })
+    });
+    map.addLayer(routeLayer);
+
+    // 5. Function to fetch and display the route
+    async function showRoute() {
+      const url = 'https://api.openrouteservice.org/v2/directions/driving-car/geojson';
+      const body = { coordinates: [start, end] };
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': ORS_API_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+      const data = await response.json();
+      const format = new ol.format.GeoJSON();
+      const features = format.readFeatures(data, {
+        featureProjection: map.getView().getProjection()
+      });
+      routeSource.clear();
+      routeSource.addFeatures(features);
+      // Fit the map to the route
+      if (features.length > 0) {
+        map.getView().fit(routeSource.getExtent(), { padding: [50, 50, 50, 50] });
+      }
+    }
+<!DOCTYPE html>
+<html>
+<head>
+  <title>OpenLayers Route Example</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css" />
+  <style>
+    #map { width: 100%; height: 500px; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script src="https://cdn.jsdelivr.net/npm/ol@latest/ol.js"></script>
+  <script>
+    // 1. Replace with your actual OpenRouteService API key
+    const ORS_API_KEY = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjkxNzY3Mzc5MTkyMTQ0NGZhMTlmNDQ0M2ZiY2RiNDVmIiwiaCI6Im11cm11cjY0In0=';
+
+    // 2. Set start and end coordinates [longitude, latitude]
+    const start = [ -0.09, 51.5 ];    // Example: London
+    const end   = [ -0.1, 51.51 ];    // Example: Near London
+
+    // 3. Set up OpenLayers map
+    const map = new ol.Map({
+      target: 'map',
+      layers: [
+        new ol.layer.Tile({ source: new ol.source.OSM() })
+      ],
+      view: new ol.View({
+        center: ol.proj.fromLonLat([ -0.095, 51.505 ]),
+        zoom: 14
+      })
+    });
+
+    // 4. Layer for the route
+    const routeSource = new ol.source.Vector();
+    const routeLayer = new ol.layer.Vector({
+      source: routeSource,
+      style: new ol.style.Style({
+        stroke: new ol.style.Stroke({
+          color: 'blue',
+          width: 4
+        })
+      })
+    });
+    map.addLayer(routeLayer);
+
+    // 5. Function to fetch and display the route
+    async function showRoute() {
+      const url = 'https://api.openrouteservice.org/v2/directions/driving-car/geojson';
+      const body = { coordinates: [start, end] };
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': ORS_API_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+      const data = await response.json();
+      const format = new ol.format.GeoJSON();
+      const features = format.readFeatures(data, {
+        featureProjection: map.getView().getProjection()
+      });
+      routeSource.clear();
+      routeSource.addFeatures(features);
+      // Fit the map to the route
+      if (features.length > 0) {
+        map.getView().fit(routeSource.getExtent(), { padding: [50, 50, 50, 50] });
+      }
+    }
+
